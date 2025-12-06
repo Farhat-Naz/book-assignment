@@ -50,10 +50,11 @@ const config: Config = {
           // Add remark and rehype plugins for math equations
           remarkPlugins: [math],
           rehypePlugins: [katex],
-          // Show last update time
-          showLastUpdateTime: true,
+          // Disable Git metadata for Vercel deployment
+          showLastUpdateTime: false,
+          showLastUpdateAuthor: false,
           // Edit URL - Update with your repo
-          editUrl: 'https://github.com/your-org/humanoid-robotics/edit/main/',
+          editUrl: 'https://github.com/Farhat-Naz/book-assignment/edit/master/humaniod-robotics/humaniod-robotics/',
         },
         blog: false, // Disable blog for this course site
         theme: {
