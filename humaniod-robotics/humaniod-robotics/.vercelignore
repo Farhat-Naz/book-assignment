@@ -1,0 +1,13 @@
+# Ignore Python/Railway backend files
+api/
+Procfile
+railway.json
+*.py
+__pycache__/
+*.pyc
+.env
+
+# Ignore common development files
+node_modules/
+.docusaurus/
+.cache/
