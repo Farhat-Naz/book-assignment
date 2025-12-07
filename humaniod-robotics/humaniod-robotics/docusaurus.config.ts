@@ -19,6 +19,11 @@ const config: Config = {
   url: 'https://humaniod-robotics.vercel.app',
   baseUrl: '/',
 
+  // Client modules for chatbot
+  clientModules: [
+    require.resolve('./src/clientModules/chatbot.ts'),
+  ],
+
   // GitHub pages deployment config
   organizationName: 'Farhat-Naz', // Update with your GitHub org/user
   projectName: 'book-assignment', // Update with your repo name
