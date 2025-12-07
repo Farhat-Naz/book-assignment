@@ -16,12 +16,12 @@ const config: Config = {
   },
 
   // Production URL - Update with your actual deployment URL
-  url: 'https://humanoid-robotics-course.vercel.app',
+  url: 'https://humaniod-robotics.vercel.app',
   baseUrl: '/',
 
   // GitHub pages deployment config
-  organizationName: 'your-org', // Update with your GitHub org/user
-  projectName: 'humanoid-robotics', // Update with your repo name
+  organizationName: 'Farhat-Naz', // Update with your GitHub org/user
+  projectName: 'book-assignment', // Update with your repo name
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
@@ -109,7 +109,7 @@ const config: Config = {
           position: 'right',
         },
         {
-          href: 'https://github.com/your-org/humanoid-robotics',
+          href: 'https://github.com/Farhat-Naz/book-assignment',
           label: 'GitHub',
           position: 'right',
         },
@@ -159,11 +159,11 @@ const config: Config = {
           items: [
             {
               label: 'GitHub Discussions',
-              href: 'https://github.com/your-org/humanoid-robotics/discussions',
+              href: 'https://github.com/Farhat-Naz/book-assignment/discussions',
             },
             {
               label: 'Report Issue',
-              href: 'https://github.com/your-org/humanoid-robotics/issues',
+              href: 'https://github.com/Farhat-Naz/book-assignment/issues',
             },
           ],
         },
