@@ -2,12 +2,6 @@
   "buildCommand": "npm run build",
   "outputDirectory": "build",
   "framework": "docusaurus",
-  "installCommand": "npm install --loglevel verbose",
-  "devCommand": "npm start",
-  "regions": ["iad1"],
-  "github": {
-    "silent": true
-  },
   "headers": [
     {
       "source": "/(.*)",
