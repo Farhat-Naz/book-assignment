@@ -19,10 +19,10 @@ const config: Config = {
   url: 'https://humaniod-robotics.vercel.app',
   baseUrl: '/',
 
-  // Client modules for chatbot
-  clientModules: [
-    require.resolve('./src/clientModules/chatbot.ts'),
-  ],
+  // Client modules for chatbot (using static script instead for better compatibility)
+  // clientModules: [
+  //   require.resolve('./src/clientModules/chatbot.ts'),
+  // ],
 
   // GitHub pages deployment config
   organizationName: 'Farhat-Naz', // Update with your GitHub org/user
@@ -81,6 +81,14 @@ const config: Config = {
 
   themeConfig: {
     image: 'img/social-card.jpg',
+
+    // Add simple chatbot loader
+    scripts: [
+      {
+        src: '/chatbot-loader.js',
+        async: true,
+      },
+    ],
 
     // Color mode configuration
     colorMode: {
