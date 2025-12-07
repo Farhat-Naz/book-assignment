@@ -10,6 +10,7 @@
 
 # Misc
 .DS_Store
+.env
 .env.local
 .env.development.local
 .env.test.local
@@ -20,3 +21,13 @@ yarn-debug.log*
 yarn-error.log*
 
 .vercel
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+api/__pycache__/

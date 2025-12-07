@@ -42,5 +42,16 @@
       "destination": "/",
       "permanent": true
     }
+  ],
+  "functions": {
+    "api/**/*.py": {
+      "runtime": "python3.9"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "/api/:path*"
+    }
   ]
 }
