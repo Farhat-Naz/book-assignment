@@ -82,17 +82,6 @@ const config: Config = {
   themeConfig: {
     image: 'img/social-card.jpg',
 
-    // Add chatbot loader script
-    headTags: [
-      {
-        tagName: 'script',
-        attributes: {
-          src: '/chatbot-loader.js',
-          defer: 'true',
-        },
-      },
-    ],
-
     // Color mode configuration
     colorMode: {
       defaultMode: 'light',
