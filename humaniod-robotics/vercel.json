@@ -1,0 +1,6 @@
+{
+  "buildCommand": "cd humaniod-robotics/humaniod-robotics && npm run build",
+  "outputDirectory": "humaniod-robotics/humaniod-robotics/build",
+  "installCommand": "cd humaniod-robotics/humaniod-robotics && npm install",
+  "framework": "docusaurus"
+}
