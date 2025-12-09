@@ -1,7 +1,6 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+import { initializeApp, FirebaseApp } from 'firebase/app';
+import { getAuth, Auth } from 'firebase/auth';
+import { getFirestore, Firestore } from 'firebase/firestore';
 
 // Get Firebase configuration from Docusaurus customFields
 function getFirebaseConfig() {
@@ -30,15 +29,27 @@ function getFirebaseConfig() {
 
 const firebaseConfig = getFirebaseConfig();
 
-// Initialize Firebase only on client-side
-let app;
-let auth;
-let db;
+// Initialize Firebase only on client-side and when config is available
+let app: FirebaseApp | undefined;
+let auth: Auth | undefined;
+let db: Firestore | undefined;
 
-if (typeof window !== 'undefined' && firebaseConfig.apiKey) {
-  app = initializeApp(firebaseConfig);
-  auth = getAuth(app);
-  db = getFirestore(app);
+// Check if we have a valid Firebase config
+const hasValidConfig = firebaseConfig.apiKey &&
+                       firebaseConfig.authDomain &&
+                       firebaseConfig.projectId;
+
+if (typeof window !== 'undefined' && hasValidConfig) {
+  try {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+    console.log('Firebase initialized successfully');
+  } catch (error) {
+    console.warn('Firebase initialization failed:', error);
+  }
+} else if (typeof window !== 'undefined') {
+  console.warn('Firebase not initialized: Missing configuration. Add Firebase environment variables to enable authentication.');
 }
 
 export { auth, db };
