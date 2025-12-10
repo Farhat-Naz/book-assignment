@@ -1,0 +1,44 @@
+# =====================================================
+# RENDER ENVIRONMENT VARIABLES - COPY & PASTE
+# =====================================================
+# Use these when deploying via Render Blueprint
+# =====================================================
+
+# =====================================================
+# SERVICE: physicalai-rag
+# =====================================================
+# GET THESE VALUES FROM YOUR .env.production FILE
+
+QDRANT_URL
+<copy-from-.env.production-line-24>
+
+QDRANT_API_KEY
+<copy-from-.env.production-line-25>
+
+CLAUDE_API_KEY
+<copy-from-.env.production-line-10>
+
+# =====================================================
+# SERVICE: physicalai-backend
+# =====================================================
+
+CORS_ORIGINS
+https://book-assignment-bqy4ulakm-farhats-projects-27800a4d.vercel.app
+
+# =====================================================
+# SERVICE: physicalai-agent
+# =====================================================
+
+TRANSLATION_API_KEY
+(leave empty - will add later)
+
+# =====================================================
+# AFTER DEPLOYMENT - UPDATE THESE IN BACKEND
+# =====================================================
+# Once you get your Render URLs, update CORS_ORIGINS:
+# Go to: Render Dashboard → physicalai-backend → Environment
+# Update CORS_ORIGINS to include all these (comma-separated):
+#
+# https://book-assignment-bqy4ulakm-farhats-projects-27800a4d.vercel.app,https://book-assignment.vercel.app
+#
+# =====================================================
