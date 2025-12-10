@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "public": true,
-  "cleanUrls": true,
-  "trailingSlash": false
+  "buildCommand": "cd website && npm install && npm run build",
+  "outputDirectory": "website/build",
+  "installCommand": "cd website && npm install"
 }
