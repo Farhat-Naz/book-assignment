@@ -30,27 +30,20 @@ const config: Config = {
 
   onBrokenLinks: 'warn',
 
-  // Multilingual support for English, Urdu, Arabic, Chinese
+  // Multilingual support - currently only English enabled
+  // Other languages (Urdu, Arabic, Chinese) will be enabled after backend translation service is deployed
   i18n: {
     defaultLocale: 'en',
-    locales: ['en', 'ur', 'ar', 'zh'],
+    locales: ['en'], // Only English for now
     localeConfigs: {
       en: {
         label: 'English',
         direction: 'ltr',
       },
-      ur: {
-        label: 'اردو',
-        direction: 'rtl',
-      },
-      ar: {
-        label: 'العربية',
-        direction: 'rtl',
-      },
-      zh: {
-        label: '中文',
-        direction: 'ltr',
-      },
+      // Disabled until translation service is ready:
+      // ur: { label: 'اردو', direction: 'rtl' },
+      // ar: { label: 'العربية', direction: 'rtl' },
+      // zh: { label: '中文', direction: 'ltr' },
     },
   },
 
@@ -113,10 +106,11 @@ const config: Config = {
           label: 'Course',
         },
         {to: '/blog', label: 'Blog', position: 'left'},
-        {
-          type: 'localeDropdown',
-          position: 'right',
-        },
+        // Locale dropdown disabled until translation service is deployed
+        // {
+        //   type: 'localeDropdown',
+        //   position: 'right',
+        // },
         {
           href: 'https://github.com/physicalai/book-assignment',
           label: 'GitHub',
