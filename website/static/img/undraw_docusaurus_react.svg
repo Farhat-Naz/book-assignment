@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <rect fill="#3578E5" width="200" height="200"/>
+  <circle fill="none" stroke="#fff" stroke-width="3" cx="100" cy="100" r="40"/>
+  <circle fill="#fff" cx="100" cy="100" r="8"/>
+  <ellipse fill="none" stroke="#fff" stroke-width="3" cx="100" cy="100" rx="70" ry="30"/>
+  <ellipse fill="none" stroke="#fff" stroke-width="3" cx="100" cy="100" rx="30" ry="70"/>
+  <text x="100" y="180" font-family="Arial" font-size="12" fill="#fff" text-anchor="middle">Learning</text>
+</svg>

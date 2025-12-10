@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <rect fill="#3578E5" width="200" height="200"/>
+  <polygon fill="#fff" points="100,50 150,150 50,150"/>
+  <text x="100" y="180" font-family="Arial" font-size="12" fill="#fff" text-anchor="middle">Physical AI</text>
+</svg>
