@@ -32,6 +32,7 @@ const sidebars: SidebarsConfig = {
         'module-1/chapter-1-intro',
         'module-1/chapter-2-hardware',
         'module-1/chapter-3-sensors',
+        'module-1/chapter-4-motion-planning',
       ],
     },
     {

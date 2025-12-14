@@ -31,7 +31,7 @@ class Settings(BaseSettings):
 
     # RAG Parameters
     RAG_TOP_K: int = 5  # Number of relevant chunks to retrieve
-    RAG_SCORE_THRESHOLD: float = 0.7  # Minimum similarity score
+    RAG_SCORE_THRESHOLD: float = 0.3  # Minimum similarity score (lowered for better recall)
 
     # Rate Limiting
     RATE_LIMIT_QUERIES: int = 20
