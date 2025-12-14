@@ -1,10 +1,15 @@
 """
 Qdrant vector database client initialization and utilities
 """
-from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams, PointStruct
 from typing import List, Dict, Any, Optional
 import logging
+import sys
+import os
+
+# Add the rag directory to the path to import temp_qdrant_mock
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+
 from src.core.config import settings
 
 logger = logging.getLogger(__name__)
@@ -16,13 +21,46 @@ class QdrantVectorStore:
     """
 
     def __init__(self):
-        """Initialize Qdrant client"""
-        self.client = QdrantClient(
-            host=settings.QDRANT_HOST,
-            port=settings.QDRANT_PORT,
+        """Initialize Qdrant client for either local or cloud"""
+        # Check if using placeholder credentials
+        is_placeholder = (
+            'your-cluster-url' in settings.QDRANT_HOST or
+            'your-actual-api-key' in settings.QDRANT_API_KEY or
+            settings.QDRANT_API_KEY == 'your-actual-api-key'
         )
+
+        if is_placeholder:
+            logger.info("Using in-memory mock Qdrant (placeholder credentials detected)")
+            from temp_qdrant_mock import mock_client
+            self.client = mock_client
+        else:
+            try:
+                from qdrant_client import QdrantClient
+
+                # Determine if this is a cloud URL (contains 'qdrant' or 'https')
+                if 'qdrant' in settings.QDRANT_HOST.lower() or settings.QDRANT_HOST.startswith('http'):
+                    # For Qdrant Cloud, use URL and API key
+                    self.client = QdrantClient(
+                        url=settings.QDRANT_HOST,
+                        api_key=settings.QDRANT_API_KEY,
+                        https=True
+                    )
+                    logger.info(f"Qdrant Cloud client initialized: {settings.QDRANT_HOST}")
+                else:
+                    # For local Qdrant, use host and port
+                    self.client = QdrantClient(
+                        host=settings.QDRANT_HOST,
+                        port=settings.QDRANT_PORT,
+                    )
+                    logger.info(f"Qdrant client initialized: {settings.QDRANT_HOST}:{settings.QDRANT_PORT}")
+
+            except Exception as e:
+                logger.warning(f"Could not connect to Qdrant: {str(e)}")
+                logger.info("Using in-memory mock Qdrant for development")
+                from temp_qdrant_mock import mock_client
+                self.client = mock_client
+
         self.collection_name = settings.QDRANT_COLLECTION_NAME
-        logger.info(f"Qdrant client initialized: {settings.QDRANT_HOST}:{settings.QDRANT_PORT}")
 
     def create_collection(self, vector_size: int = None) -> None:
         """
@@ -95,12 +133,14 @@ class QdrantVectorStore:
         score_threshold = score_threshold or settings.RAG_SCORE_THRESHOLD
 
         try:
+            from qdrant_client.models import Filter
+
             search_result = self.client.search(
                 collection_name=self.collection_name,
                 query_vector=query_vector,
                 limit=top_k,
                 score_threshold=score_threshold,
-                query_filter=filter_dict,
+                filter=self._convert_filter(filter_dict) if filter_dict else None,
             )
 
             results = []
@@ -117,6 +157,31 @@ class QdrantVectorStore:
         except Exception as e:
             logger.error(f"Error searching: {str(e)}")
             raise
+
+    def _convert_filter(self, filter_dict: Dict[str, Any]):
+        """Convert simple filter dict to Qdrant Filter object"""
+        from qdrant_client.models import Filter, FieldCondition, Match
+        conditions = []
+
+        for key, value in filter_dict.items():
+            if isinstance(value, dict) and '$in' in value:
+                # Handle "$in" queries
+                conditions.append(
+                    FieldCondition(
+                        key=key,
+                        match=Match(any=value['$in'])
+                    )
+                )
+            else:
+                # Handle simple equality
+                conditions.append(
+                    FieldCondition(
+                        key=key,
+                        match=Match(value=value)
+                    )
+                )
+
+        return Filter(must=conditions)
 
     def delete_collection(self) -> None:
         """Delete the collection"""

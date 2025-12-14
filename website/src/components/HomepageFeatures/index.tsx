@@ -11,12 +11,11 @@ type FeatureItem = {
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Easy to Use',
+    title: 'Important Thing',
     Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+       Physical AI is driving a new phase of industrial automation, offering a powerful solution to manufacturing challenges like rising costs, labour shortages,and shifting customer demands.
       </>
     ),
   },
@@ -25,8 +24,7 @@ const FeatureList: FeatureItem[] = [
     Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+       A new World Economic Forum white paper examines how breakthroughs in AI, sensors, and hardware are creating a new breed of smarter, more agile industrial robots. the <code>docs</code> directory.
       </>
     ),
   },

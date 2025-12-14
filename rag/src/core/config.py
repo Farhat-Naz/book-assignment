@@ -2,7 +2,7 @@
 Configuration management for RAG service using Pydantic Settings
 """
 from typing import List
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -14,10 +14,11 @@ class Settings(BaseSettings):
     DEBUG: bool = False
 
     # Qdrant Vector Database
-    QDRANT_HOST: str = "qdrant"
-    QDRANT_PORT: int = 6333
+    QDRANT_HOST: str = "your-cluster-url.qdrant.io"  # Replace with your actual URL
+    QDRANT_PORT: int = 443  # Qdrant Cloud uses HTTPS on port 443
+    QDRANT_API_KEY: str = "your-actual-api-key"  # Add your API key
     QDRANT_COLLECTION_NAME: str = "course_chapters"
-    QDRANT_VECTOR_SIZE: int = 768  # Qwen embedding dimension
+    QDRANT_VECTOR_SIZE: int = 384  # all-MiniLM-L6-v2 embedding dimension
 
     # Ollama (for Qwen embeddings)
     OLLAMA_HOST: str = "http://host.docker.internal:11434"
@@ -46,12 +47,11 @@ class Settings(BaseSettings):
     # Logging
     LOG_LEVEL: str = "INFO"
 
-    model_config = SettingsConfigDict(
-        env_file=".env",
-        env_file_encoding="utf-8",
-        case_sensitive=True,
-        extra="ignore"
-    )
+    class Config:
+        env_file = ".env"
+        env_file_encoding = "utf-8"
+        case_sensitive = True
+        extra = "ignore"
 
 
 # Global settings instance

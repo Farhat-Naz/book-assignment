@@ -15,11 +15,15 @@ const config: Config = {
   },
 
   // Set the production url of your site here
-  // Use VERCEL_URL environment variable for Vercel, fallback to GitHub Pages
-  url: process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://farhat-naz.github.io',
+  // Support Railway, Vercel, and GitHub Pages deployments
+  url: process.env.RAILWAY_PUBLIC_DOMAIN
+    ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`
+    : process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : 'https://farhat-naz.github.io',
   // Set the /<baseUrl>/ pathname under which your site is served
-  // For Vercel deployment use '/', for GitHub pages use '/<projectName>/'
-  baseUrl: process.env.VERCEL_URL ? '/' : '/newhumandiod-book/',
+  // For Railway/Vercel deployment use '/', for GitHub pages use '/<projectName>/'
+  baseUrl: '/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
@@ -62,7 +66,7 @@ const config: Config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+            'https://github.com/physicalai/book-assignment',
         },
         blog: {
           showReadingTime: true,
@@ -73,7 +77,7 @@ const config: Config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+            'https://github.com/physicalai/book-assignment',
           // Useful options to enforce blogging best practices
           onInlineTags: 'warn',
           onInlineAuthors: 'warn',
@@ -86,9 +90,11 @@ const config: Config = {
     ],
   ],
 
+  themes: ['@docusaurus/theme-mermaid'],
+
   themeConfig: {
     // Replace with your project's social card
-    image: 'img/docusaurus-social-card.jpg',
+    image: 'img/logo.svg',
     colorMode: {
       respectPrefersColorScheme: true,
     },
@@ -129,8 +135,12 @@ const config: Config = {
               to: '/docs/intro',
             },
             {
-              label: 'Modules',
-              to: '/docs/category/modules',
+              label: 'Module 1',
+              to: '/docs/category/module-1',
+            },
+            {
+              label: 'Module 2',
+              to: '/docs/category/module-2',
             },
           ],
         },
