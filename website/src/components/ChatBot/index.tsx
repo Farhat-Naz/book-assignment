@@ -25,19 +25,30 @@ const ChatBot: React.FC = () => {
   // RAG backend WebSocket URL
   // Set REACT_APP_RAG_BACKEND_URL environment variable for custom backend
   const getBackendUrl = () => {
-    // Check for environment variable first
+    // Check for custom window variable
     if (typeof window !== 'undefined' && (window as any).RAG_BACKEND_URL) {
       return (window as any).RAG_BACKEND_URL;
     }
 
-    // For development, try localhost
+    // Check if we're on localhost (development)
+    if (typeof window !== 'undefined') {
+      const isLocalhost = window.location.hostname === 'localhost' ||
+                          window.location.hostname === '127.0.0.1' ||
+                          window.location.hostname === '';
+
+      if (isLocalhost) {
+        return 'ws://localhost:8000/ws/chat';
+      }
+    }
+
+    // For development mode
     if (process.env.NODE_ENV === 'development') {
       return 'ws://localhost:8000/ws/chat';
     }
 
-    // For production, backend should be deployed separately
-    // Return null to show offline mode
-    return null;
+    // For production, check environment variable or return null
+    const prodBackend = process.env.REACT_APP_RAG_BACKEND_URL;
+    return prodBackend || null;
   };
 
   const WS_URL = getBackendUrl();
