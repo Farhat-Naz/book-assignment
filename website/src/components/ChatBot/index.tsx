@@ -22,14 +22,39 @@ const ChatBot: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const wsRef = useRef<WebSocket | null>(null);
 
-  // RAG backend WebSocket URL - adjust if needed
-  const WS_URL = process.env.NODE_ENV === 'production'
-    ? 'wss://your-rag-backend.com/ws/chat'
-    : 'ws://localhost:8000/ws/chat';
+  // RAG backend WebSocket URL
+  // Set REACT_APP_RAG_BACKEND_URL environment variable for custom backend
+  const getBackendUrl = () => {
+    // Check for environment variable first
+    if (typeof window !== 'undefined' && (window as any).RAG_BACKEND_URL) {
+      return (window as any).RAG_BACKEND_URL;
+    }
+
+    // For development, try localhost
+    if (process.env.NODE_ENV === 'development') {
+      return 'ws://localhost:8000/ws/chat';
+    }
+
+    // For production, backend should be deployed separately
+    // Return null to show offline mode
+    return null;
+  };
+
+  const WS_URL = getBackendUrl();
 
   useEffect(() => {
-    if (!isMinimized) {
+    if (!isMinimized && WS_URL) {
       connectWebSocket();
+    } else if (!isMinimized && !WS_URL) {
+      // Show offline message
+      setMessages([
+        {
+          id: Date.now().toString(),
+          type: 'error',
+          content: '🌐 RAG backend is not configured. The chatbot requires a deployed backend service. See DEPLOYMENT.md for setup instructions.',
+          timestamp: new Date(),
+        },
+      ]);
     }
     return () => {
       if (wsRef.current) {
@@ -47,6 +72,18 @@ const ChatBot: React.FC = () => {
   };
 
   const connectWebSocket = () => {
+    if (!WS_URL) {
+      setMessages([
+        {
+          id: Date.now().toString(),
+          type: 'error',
+          content: '🌐 Backend not configured. Please deploy the RAG service first.',
+          timestamp: new Date(),
+        },
+      ]);
+      return;
+    }
+
     try {
       const ws = new WebSocket(WS_URL);
 
