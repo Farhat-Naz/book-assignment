@@ -16,62 +16,22 @@ interface Message {
 const ChatBot: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
-  const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isMinimized, setIsMinimized] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const wsRef = useRef<WebSocket | null>(null);
-
-  // RAG backend WebSocket URL
-  // Set REACT_APP_RAG_BACKEND_URL environment variable for custom backend
-  const getBackendUrl = () => {
-    // Check for custom window variable
-    if (typeof window !== 'undefined' && (window as any).RAG_BACKEND_URL) {
-      return (window as any).RAG_BACKEND_URL;
-    }
-
-    // Check if we're on localhost (development)
-    if (typeof window !== 'undefined') {
-      const isLocalhost = window.location.hostname === 'localhost' ||
-                          window.location.hostname === '127.0.0.1' ||
-                          window.location.hostname === '';
-
-      if (isLocalhost) {
-        return 'ws://localhost:8000/ws/chat';
-      }
-    }
-
-    // For development mode
-    if (process.env.NODE_ENV === 'development') {
-      return 'ws://localhost:8000/ws/chat';
-    }
-
-    // For production, check environment variable or return null
-    const prodBackend = process.env.REACT_APP_RAG_BACKEND_URL;
-    return prodBackend || null;
-  };
-
-  const WS_URL = getBackendUrl();
 
   useEffect(() => {
-    if (!isMinimized && WS_URL) {
-      connectWebSocket();
-    } else if (!isMinimized && !WS_URL) {
-      // Show offline message
+    if (!isMinimized && messages.length === 0) {
+      // Show welcome message
       setMessages([
         {
           id: Date.now().toString(),
-          type: 'error',
-          content: '🌐 RAG backend is not configured. The chatbot requires a deployed backend service. See DEPLOYMENT.md for setup instructions.',
+          type: 'assistant',
+          content: 'Hello! I\'m your Physical AI & Robotics course assistant. Ask me anything about the course content, robotics concepts, or specific topics!',
           timestamp: new Date(),
         },
       ]);
     }
-    return () => {
-      if (wsRef.current) {
-        wsRef.current.close();
-      }
-    };
   }, [isMinimized]);
 
   useEffect(() => {
@@ -82,92 +42,8 @@ const ChatBot: React.FC = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const connectWebSocket = () => {
-    if (!WS_URL) {
-      setMessages([
-        {
-          id: Date.now().toString(),
-          type: 'error',
-          content: '🌐 Backend not configured. Please deploy the RAG service first.',
-          timestamp: new Date(),
-        },
-      ]);
-      return;
-    }
-
-    try {
-      const ws = new WebSocket(WS_URL);
-
-      ws.onopen = () => {
-        console.log('Connected to RAG chatbot');
-        setIsConnected(true);
-        setMessages([
-          {
-            id: Date.now().toString(),
-            type: 'assistant',
-            content: 'Hello! I\'m your Physical AI & Robotics course assistant. Ask me anything about the course content, robotics concepts, or specific chapters!',
-            timestamp: new Date(),
-          },
-        ]);
-      };
-
-      ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        setIsLoading(false);
-
-        if (data.type === 'complete') {
-          setMessages((prev) => [
-            ...prev,
-            {
-              id: Date.now().toString(),
-              type: 'assistant',
-              content: data.content,
-              sources: data.sources,
-              timestamp: new Date(),
-            },
-          ]);
-        } else if (data.type === 'error') {
-          setMessages((prev) => [
-            ...prev,
-            {
-              id: Date.now().toString(),
-              type: 'error',
-              content: data.error || 'An error occurred',
-              timestamp: new Date(),
-            },
-          ]);
-        }
-      };
-
-      ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
-        setIsConnected(false);
-        setIsLoading(false);
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: Date.now().toString(),
-            type: 'error',
-            content: 'Failed to connect to the chatbot. Please ensure the RAG server is running on localhost:8000.',
-            timestamp: new Date(),
-          },
-        ]);
-      };
-
-      ws.onclose = () => {
-        console.log('Disconnected from RAG chatbot');
-        setIsConnected(false);
-      };
-
-      wsRef.current = ws;
-    } catch (error) {
-      console.error('Failed to connect:', error);
-      setIsConnected(false);
-    }
-  };
-
-  const sendMessage = () => {
-    if (!input.trim() || !isConnected || isLoading) return;
+  const sendMessage = async () => {
+    if (!input.trim() || isLoading) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -178,12 +54,49 @@ const ChatBot: React.FC = () => {
 
     setMessages((prev) => [...prev, userMessage]);
     setIsLoading(true);
-
-    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-      wsRef.current.send(JSON.stringify({ query: input }));
-    }
-
     setInput('');
+
+    try {
+      // Call Vercel serverless API
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ query: input }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to get response');
+      }
+
+      // Add assistant response
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now().toString(),
+          type: 'assistant',
+          content: data.content,
+          sources: data.sources,
+          timestamp: new Date(),
+        },
+      ]);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now().toString(),
+          type: 'error',
+          content: `Error: ${error.message}. Please make sure the OpenAI API key is configured in Vercel environment variables.`,
+          timestamp: new Date(),
+        },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -212,7 +125,7 @@ const ChatBot: React.FC = () => {
         <div className={styles.headerLeft}>
           <span className={styles.botIcon}>🤖</span>
           <span className={styles.botName}>Course AI Assistant</span>
-          {isConnected && <span className={styles.statusOnline}>●</span>}
+          <span className={styles.statusOnline}>●</span>
         </div>
         <button className={styles.minimizeBtn} onClick={toggleMinimize}>
           ✕
@@ -262,24 +175,18 @@ const ChatBot: React.FC = () => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyPress={handleKeyPress}
-          placeholder={isConnected ? "Ask about the course..." : "Connecting..."}
-          disabled={!isConnected || isLoading}
+          placeholder="Ask about the course..."
+          disabled={isLoading}
           rows={1}
         />
         <button
           onClick={sendMessage}
-          disabled={!input.trim() || !isConnected || isLoading}
+          disabled={!input.trim() || isLoading}
           className={styles.sendBtn}
         >
           ➤
         </button>
       </div>
-
-      {!isConnected && (
-        <div className={styles.connectionWarning}>
-          ⚠️ Not connected. Start the RAG server: <code>cd rag && uvicorn src.main:app --reload</code>
-        </div>
-      )}
     </div>
   );
 };
