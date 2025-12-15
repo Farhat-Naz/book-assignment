@@ -24,10 +24,10 @@ class Settings(BaseSettings):
     OLLAMA_HOST: str = "http://host.docker.internal:11434"
     OLLAMA_MODEL: str = "qwen2.5"
 
-    # Claude API (for answer refinement)
-    CLAUDE_API_KEY: str = "your-claude-api-key-here"
-    CLAUDE_MODEL: str = "claude-3-5-sonnet-20241022"
-    CLAUDE_MAX_TOKENS: int = 1024
+    # OpenAI API (for answer generation)
+    OPENAI_API_KEY: str = "your-openai-api-key-here"
+    OPENAI_MODEL: str = "gpt-3.5-turbo"
+    OPENAI_MAX_TOKENS: int = 1024
 
     # RAG Parameters
     RAG_TOP_K: int = 5  # Number of relevant chunks to retrieve

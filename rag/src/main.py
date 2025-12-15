@@ -11,7 +11,7 @@ from src.services.embedding_service import EmbeddingService
 import logging
 import json
 from typing import Optional, Dict, Any
-from anthropic import AsyncAnthropic
+from openai import AsyncOpenAI
 
 # Configure logging
 logging.basicConfig(
@@ -42,7 +42,7 @@ app.add_middleware(
 embedding_service = EmbeddingService()
 doc_loader = UniversalDocLoader()
 chunker = TextChunker()
-anthropic_client = AsyncAnthropic(api_key=settings.CLAUDE_API_KEY)
+openai_client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
 
 
 @app.get("/")
@@ -145,32 +145,32 @@ async def chat_websocket(websocket: WebSocket):
 
                 context = "\n\n".join(context_parts)
 
-                # 4. Generate response using Claude
+                # 4. Generate response using OpenAI
                 prompt = f"""
                 You are a helpful assistant for the Physical AI & Humanoid Robotics course.
                 Answer the user's question based on the provided context from course materials.
-                
+
                 Question: {query}
-                
+
                 Context: {context}
-                
+
                 Please provide a clear, concise answer based on the context provided.
-                If the context doesn't contain enough information to answer the question, 
+                If the context doesn't contain enough information to answer the question,
                 let the user know and suggest they might want to check other course materials.
                 """
 
-                response = await anthropic_client.messages.create(
-                    model=settings.CLAUDE_MODEL,
-                    max_tokens=settings.CLAUDE_MAX_TOKENS,
+                response = await openai_client.chat.completions.create(
+                    model=settings.OPENAI_MODEL,
+                    max_tokens=settings.OPENAI_MAX_TOKENS,
                     messages=[{"role": "user", "content": prompt}]
                 )
 
-                claude_response = response.content[0].text if response.content else "I couldn't generate a response."
+                openai_response = response.choices[0].message.content if response.choices else "I couldn't generate a response."
 
                 # 5. Send response back to client
                 await websocket.send_json({
                     "type": "complete",
-                    "content": claude_response,
+                    "content": openai_response,
                     "sources": sources
                 })
 
