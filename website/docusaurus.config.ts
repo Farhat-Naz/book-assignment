@@ -160,6 +160,10 @@ const config: Config = {
           position: 'right',
         },
         {
+          type: 'custom-userMenu',
+          position: 'right',
+        },
+        {
           href: 'https://github.com/physicalai/book-assignment',
           label: 'GitHub',
           position: 'right',
