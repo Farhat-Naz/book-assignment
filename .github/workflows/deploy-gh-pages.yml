@@ -36,6 +36,7 @@ jobs:
         run: npm run build
         env:
           NODE_ENV: production
+          CLERK_PUBLISHABLE_KEY: ${{ secrets.CLERK_PUBLISHABLE_KEY }}
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
